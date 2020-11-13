@@ -1,0 +1,24 @@
+---
+
+- hosts: all
+  tasks:
+    - name: Enable tailscale repo
+    - name: Enable tailscale gpg key
+
+    - name: Install packages
+      package:
+        name: {{ for_each }}
+      for_each:
+        - jq
+        - vim
+        - apt-transport-https
+        - tailscale
+    - name: Get SSH keys
+      command: curl https://raw.githubusercontent.com/jackrayner/public-ssh-keys/master/get-keys.sh | bash -s {{ github_username }}
+      vars:
+        github_username: put something here because idk
+    - name: Register tailscale
+      command: tailscale up -authkey {{ tailscale_authkey }}
+      vars:
+        - tailscale_authkey: put something here
+
